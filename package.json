@@ -1,0 +1,14 @@
+{
+  "name": "robust-timers",
+  "version": "1.0.0",
+  "description": "Powerful yet simple timers engine with ability to save and restore timers states.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "timers"
+  ],
+  "author": "Danila Simonov <ek@ek-mail.ru>",
+  "license": "ISC"
+}
