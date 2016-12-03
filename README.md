@@ -1,9 +1,6 @@
 <a name="RobustTimers"></a>
 
 ## RobustTimers
-
-[![Build Status](https://travis-ci.org/ElKornacio/Robust-Timers.svg?branch=master)](https://travis-ci.org/ElKornacio/Robust-Timers)
-
 Simple class used for multiple purposes regarding to timers.
 Except obvious functions like registering, unregistering timers,
 you can easily save and restore timers states, register "once" timers,
