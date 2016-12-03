@@ -134,10 +134,14 @@ Similar to simple JS setTimeout.
 <a name="RobustTimers+restore"></a>
 
 ### robustTimers.restore(handler)
-If handler is provided - registers it as default restoring function this.onRestoreHandler.
-If not - trying to restore all inner state using this.onRestoreHandler.
+If handler is provided - registers it as default restoring function this.__onRestoreHandler.
+If not - trying to restore all inner state using this.__onRestoreHandler.
 
 **Kind**: instance method of <code>[RobustTimers](#RobustTimers)</code>  
+**Throws**:
+
+- Will throw an exception if there are no restore handler, or if restore handler did not return promise.
+
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -146,10 +150,14 @@ If not - trying to restore all inner state using this.onRestoreHandler.
 <a name="RobustTimers+save"></a>
 
 ### robustTimers.save(handler)
-If handler is provided - registers it as default saving function this.onSaveHandler.
-If not - trying to save all inner state using this.onSaveHandler.
+If handler is provided - registers it as default saving function this.__onSaveHandler.
+If not - trying to save all inner state using this.__onSaveHandler.
 
 **Kind**: instance method of <code>[RobustTimers](#RobustTimers)</code>  
+**Throws**:
+
+- Will throw an exception if there are no save handler, or if save handler did not return promise.
+
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |

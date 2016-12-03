@@ -27,11 +27,12 @@ class RobustTimers {
 	 * @param {Object} options.dataSource - data source object. You can see object description at this.assignDataSource() method.
 	 */
 	constructor(options) {
+		options = options || {};
 		this.__timers = {};
-		this.isStarted = false;
+		this.__isStarted = false;
 
-		this.onRestoreHandler = null;
-		this.onSaveHandler = null;
+		this.__onRestoreHandler = null;
+		this.__onSaveHandler = null;
 
 		if (options.dataSource) {
 			this.assignDataSource(options.dataSource);
@@ -73,7 +74,7 @@ class RobustTimers {
 	__checkExistenceAndGetByName(name) {
 		let timer = this.__timers[name];
 		if (!timer) {
-			throw new Exception('Timer was not found.');
+			throw new Error('Timer was not found.');
 		}
 		return timer;
 	}
@@ -119,7 +120,7 @@ class RobustTimers {
 		let hasEnded = false;
 		let callback = () => {
 			if (hasEnded) {
-				throw new Exception(
+				throw new Error(
 					'Handler can`t call callback and return Promise ' +
 					'at the same time. Select one of variants.'
 				);
@@ -129,7 +130,7 @@ class RobustTimers {
 			if (timer.isOnce) {
 				this.unregister(timer.name);
 			} else {
-				if (this.isStarted && timer.active) {
+				if (this.__isStarted && timer.active) {
 					this.__doInNextTick(
 						this.__continueTimerLifecycle.bind(this, timer)
 					);
@@ -138,7 +139,7 @@ class RobustTimers {
 		}
 		let interval = timer.interval;
 		if (timer.lastExecutionTimestamp) {
-			let delta = startTime - timer.lastExecutionTimestamp;
+			let delta = startTime - timer.lastExecutionTimestamp - timer.interval;
 			interval -= delta;
 		}
 		if (interval < 0) {
@@ -171,13 +172,13 @@ class RobustTimers {
 		let name = options.name || ('Timer #' + Math.random());
 		let active = (typeof options.active !== 'undefined') ? options.active : true;
 		if (!options.handler) {
-			throw new Exception('Timer can`t be without handler.')
+			throw new Error('Timer can`t be without handler.')
 		}
 		let handler = options.handler;
-		let isOnce = (typeof options.isOnce !== 'undefined') ? options.isOnce : true;
+		let isOnce = (typeof options.isOnce !== 'undefined') ? options.isOnce : false;
 		let lastExecutionTimestamp = (typeof options.lastExecutionTimestamp !== 'undefined') ? options.lastExecutionTimestamp : null;
 		if (!options.interval) {
-			throw new Exception('Timer can`t be without interval.')
+			throw new Error('Timer can`t be without interval.')
 		}
 		let interval = options.interval;
 		let context = options.context || null;
@@ -195,7 +196,7 @@ class RobustTimers {
 
 		this.__timers[name] = timer;
 
-		if (this.isStarted && timer.active) {
+		if (this.__isStarted && timer.active) {
 			this.__continueTimerLifecycle(timer);
 		}
 		return this;
@@ -235,7 +236,7 @@ class RobustTimers {
 		}
 		timer.lastExecutionTimestamp = null;
 		timer.active = true;
-		if (this.isStarted) {
+		if (this.__isStarted) {
 			this.__continueTimerLifecycle(timer);
 		}
 		return this;
@@ -273,6 +274,7 @@ class RobustTimers {
 				this.__continueTimerLifecycle(timer);
 			}
 		}
+		this.__isStarted = true;
 		return this;
 	}
 
@@ -314,41 +316,51 @@ class RobustTimers {
 	}
 
 	/**
-	 * If handler is provided - registers it as default restoring function this.onRestoreHandler.
-	 * If not - trying to restore all inner state using this.onRestoreHandler.
+	 * If handler is provided - registers it as default restoring function this.__onRestoreHandler.
+	 * If not - trying to restore all inner state using this.__onRestoreHandler.
 	 *
 	 * @method
 	 * @param {function} handler - async function that gets one param - this instance and should restore all it's inner state basing on anything (DB/Local Storage/etc.).
+	 * @throws Will throw an exception if there are no restore handler, or if restore handler did not return promise.
 	 */
 	restore(handler = null) {
 		if (handler) {
-			this.onRestoreHandler = handler;
+			this.__onRestoreHandler = handler;
 			return this;
 		}
-		if (!this.onRestoreHandler) {
-			throw new Exception('There is no registered function which can restore timers.')
+		if (!this.__onRestoreHandler) {
+			throw new Error('There is no registered function which can restore timers.')
 		}
-		return this.onRestoreHandler(this).then(() => {
+		let promise = this.__onRestoreHandler(this);
+		if (!(promise instanceof Promise)) {
+			throw new Error('Restore handler should always return promise.')	
+		}
+		return promise.then(() => {
 			return this;
 		});
 	}
 
 	/**
-	 * If handler is provided - registers it as default saving function this.onSaveHandler.
-	 * If not - trying to save all inner state using this.onSaveHandler.
+	 * If handler is provided - registers it as default saving function this.__onSaveHandler.
+	 * If not - trying to save all inner state using this.__onSaveHandler.
 	 *
 	 * @method
 	 * @param {function} handler - async function that gets one param - this instance and should save all it's inner state in anywhere (DB/Local Storage/etc.).
+	 * @throws Will throw an exception if there are no save handler, or if save handler did not return promise.
 	 */
 	save(handler = null) {
 		if (handler) {
-			this.onSaveHandler = handler;
+			this.__onSaveHandler = handler;
 			return this;
 		}
-		if (!this.onSaveHandler) {
-			throw new Exception('There is no registered function which can save timers.')
+		if (!this.__onSaveHandler) {
+			throw new Error('There is no registered function which can save timers.')
 		}
-		return this.onSaveHandler(this).then(() => {
+		let promise = this.__onSaveHandler(this);
+		if (!(promise instanceof Promise)) {
+			throw new Error('Save handler should always return promise.')	
+		}
+		return promise.then(() => {
 			return this;
 		});
 	}
@@ -361,13 +373,12 @@ class RobustTimers {
 	 */
 	assignDataSource(dataSource) {
 		if (!dataSource.restore) {
-			throw new Exception('There is no restore method in dataSource.')
+			throw new Error('There is no restore method in dataSource.')
 		}
 		if (!dataSource.save) {
-			throw new Exception('There is no save method in dataSource.')
+			throw new Error('There is no save method in dataSource.')
 		}
-		this.restore(dataSource.restore);
-		this.save(dataSource.save);
+		this.restore(dataSource.restore).save(dataSource.save);
 		return this;
 	}
 
