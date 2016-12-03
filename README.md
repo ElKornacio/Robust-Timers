@@ -1,5 +1,7 @@
 <a name="RobustTimers"></a>
 
+[Documentation: https://elkornacio.github.io/Robust-Timers/](https://elkornacio.github.io/Robust-Timers/)
+
 ## RobustTimers
 Simple class used for multiple purposes regarding to timers.
 Except obvious functions like registering, unregistering timers,
