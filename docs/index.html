@@ -42,6 +42,315 @@
 
 
 
+    <section>
+        <article><p><a name="RobustTimers"></a></p>
+<h2>RobustTimers</h2><p>Simple class used for multiple purposes regarding to timers.
+Except obvious functions like registering, unregistering timers,
+you can easily save and restore timers states, register &quot;once&quot; timers,
+activate and deactivate registered timers, provide your own handlers
+to serialize/unseriaize and save/restore timer states.</p>
+<p>All functions (except asynchronous) returns context to provide fluent
+interface pattern.</p>
+<p>Meant that this class will be used as singleton, but it's up to you and yours
+app's architecture.</p>
+<p><strong>Kind</strong>: global class  </p>
+<ul>
+<li><a href="#RobustTimers">RobustTimers</a><ul>
+<li><a href="#new_RobustTimers_new">new RobustTimers(options)</a></li>
+<li><a href="#RobustTimers+register">.register(options)</a></li>
+<li><a href="#RobustTimers+unregister">.unregister(name)</a></li>
+<li><a href="#RobustTimers+activate">.activate(name)</a></li>
+<li><a href="#RobustTimers+deactivate">.deactivate(name)</a></li>
+<li><a href="#RobustTimers+start">.start()</a></li>
+<li><a href="#RobustTimers+interval">.interval(name, interval, handler)</a></li>
+<li><a href="#RobustTimers+once">.once(name, interval, handler)</a></li>
+<li><a href="#RobustTimers+restore">.restore(handler)</a></li>
+<li><a href="#RobustTimers+save">.save(handler)</a></li>
+<li><a href="#RobustTimers+assignDataSource">.assignDataSource(dataSource)</a></li>
+</ul>
+</li>
+</ul>
+<p><a name="new_RobustTimers_new"></a></p>
+<h3>new RobustTimers(options)</h3><p>Just constructor.</p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>options</td>
+<td><code>Object</code></td>
+<td>object containing options for construction.</td>
+</tr>
+<tr>
+<td>options.start</td>
+<td><code>boolean</code></td>
+<td>if true - calls this.start() at the end of construction.</td>
+</tr>
+<tr>
+<td>options.restoreAndStart</td>
+<td><code>boolean</code></td>
+<td>if true - calls this.restore() and after restoring states calls this.start(). Use only makes sense in combination with the provided options.dataSource param.</td>
+</tr>
+<tr>
+<td>options.dataSource</td>
+<td><code>Object</code></td>
+<td>data source object. You can see object description at this.assignDataSource() method.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="RobustTimers+register"></a></p>
+<h3>robustTimers.register(options)</h3><p>Registers new timer and runs it if needed.</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#RobustTimers">RobustTimers</a></code><br><strong>Throws</strong>:</p>
+<ul>
+<li>Will throw an exception if there are no handler or interval provided in options.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>options</td>
+<td><code>Object</code></td>
+<td>object containing options of timer.</td>
+</tr>
+<tr>
+<td>options.name</td>
+<td><code>string</code></td>
+<td>name of the timer. Unique. Will be generated if not provided. All methods works with this name.</td>
+</tr>
+<tr>
+<td>options.active</td>
+<td><code>boolean</code></td>
+<td>if true - timer is active (and will be started immediatly if this.start() was already called).</td>
+</tr>
+<tr>
+<td>options.handler</td>
+<td><code>function</code></td>
+<td>timer's handler - function which called every time timer is fired. If options.isOnce is true - will be called once. Required.</td>
+</tr>
+<tr>
+<td>options.isOnce</td>
+<td><code>boolean</code></td>
+<td>if true - after first timer's firing timer will be unregistered.</td>
+</tr>
+<tr>
+<td>options.lastExecutionTimestamp</td>
+<td><code>number</code></td>
+<td>if timer was already fired in past this param should contain last execution timestamp (in ms) - it will be used to calculate correctly next execution time.</td>
+</tr>
+<tr>
+<td>options.interval</td>
+<td><code>number</code></td>
+<td>timer's execution interval. In milliseconds. Required.</td>
+</tr>
+<tr>
+<td>options.context</td>
+<td><code>Object</code></td>
+<td>context that will be provided to the timer's handler when it's executing.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="RobustTimers+unregister"></a></p>
+<h3>robustTimers.unregister(name)</h3><p>Unregisters timer and stops it if needed.</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#RobustTimers">RobustTimers</a></code>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td><code>string</code></td>
+<td>name of the timer.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="RobustTimers+activate"></a></p>
+<h3>robustTimers.activate(name)</h3><p>Starts the timer lifecycle.</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#RobustTimers">RobustTimers</a></code>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td><code>string</code></td>
+<td>name of the timer.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="RobustTimers+deactivate"></a></p>
+<h3>robustTimers.deactivate(name)</h3><p>Pauses the timer lifecycle.</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#RobustTimers">RobustTimers</a></code>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td><code>string</code></td>
+<td>name of the timer.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="RobustTimers+start"></a></p>
+<h3>robustTimers.start()</h3><p>If all event handlers and other staff is registered, timers states are restored,
+and we are ready to go at all - starts all registered timers lifecycles.</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#RobustTimers">RobustTimers</a></code><br><a name="RobustTimers+interval"></a></p>
+<h3>robustTimers.interval(name, interval, handler)</h3><p>Shortcut to register simple interval-based timer.
+Similar to simple JS setInterval.</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#RobustTimers">RobustTimers</a></code>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td><code>string</code></td>
+<td>name of the timer.</td>
+</tr>
+<tr>
+<td>interval</td>
+<td><code>number</code></td>
+<td>interval of the timer.</td>
+</tr>
+<tr>
+<td>handler</td>
+<td><code>function</code></td>
+<td>handler of the timer.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="RobustTimers+once"></a></p>
+<h3>robustTimers.once(name, interval, handler)</h3><p>Shortcut to register simple timer, that should be fired only once.
+Similar to simple JS setTimeout.</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#RobustTimers">RobustTimers</a></code>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td><code>string</code></td>
+<td>name of the timer.</td>
+</tr>
+<tr>
+<td>interval</td>
+<td><code>number</code></td>
+<td>interval of the timer.</td>
+</tr>
+<tr>
+<td>handler</td>
+<td><code>function</code></td>
+<td>handler of the timer.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="RobustTimers+restore"></a></p>
+<h3>robustTimers.restore(handler)</h3><p>If handler is provided - registers it as default restoring function this.<strong>onRestoreHandler.
+If not - trying to restore all inner state using this.</strong>onRestoreHandler.</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#RobustTimers">RobustTimers</a></code><br><strong>Throws</strong>:</p>
+<ul>
+<li>Will throw an exception if there are no restore handler, or if restore handler did not return promise.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>handler</td>
+<td><code>function</code></td>
+<td><code></code></td>
+<td>async function that gets one param - this instance and should restore all it's inner state basing on anything (DB/Local Storage/etc.).</td>
+</tr>
+</tbody>
+</table>
+<p><a name="RobustTimers+save"></a></p>
+<h3>robustTimers.save(handler)</h3><p>If handler is provided - registers it as default saving function this.<strong>onSaveHandler.
+If not - trying to save all inner state using this.</strong>onSaveHandler.</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#RobustTimers">RobustTimers</a></code><br><strong>Throws</strong>:</p>
+<ul>
+<li>Will throw an exception if there are no save handler, or if save handler did not return promise.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>handler</td>
+<td><code>function</code></td>
+<td><code></code></td>
+<td>async function that gets one param - this instance and should save all it's inner state in anywhere (DB/Local Storage/etc.).</td>
+</tr>
+</tbody>
+</table>
+<p><a name="RobustTimers+assignDataSource"></a></p>
+<h3>robustTimers.assignDataSource(dataSource)</h3><p>Registers save/restore handlers from the given object.</p>
+<p><strong>Kind</strong>: instance method of <code><a href="#RobustTimers">RobustTimers</a></code>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dataSource</td>
+<td><code>Object</code></td>
+<td>object with two properties &quot;save&quot; and &quot;restore&quot; containing save and restore functions respectively. THIS OBJECT IS NOT USED AS A CONTEXT WHEN THIS FUNCTIONS ARE CALLED!</td>
+</tr>
+</tbody>
+</table></article>
+    </section>
+
 
 
 
@@ -56,7 +365,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sun Dec 04 2016 01:34:58 GMT+0300 (+03)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sun Dec 04 2016 01:43:04 GMT+0300 (+03)
 </footer>
 
 <script> prettyPrint(); </script>
