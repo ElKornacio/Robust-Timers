@@ -2,6 +2,12 @@
 
 [Documentation: https://elkornacio.github.io/Robust-Timers/](https://elkornacio.github.io/Robust-Timers/)
 
+## Installation
+
+```sh
+$ npm install robust-timers
+```
+
 ## RobustTimers
 Simple class used for multiple purposes regarding to timers.
 Except obvious functions like registering, unregistering timers,
