@@ -384,6 +384,17 @@ class RobustTimers {
 
 }
 
+/*
+	TODO:
+		native redis
+		native amqp
+		native memcached
+		sequelize
+		mongoose
+*/
+
+RobustTimers.DataSource = require('./dataSources');
+
 if (typeof module !== 'undefined') {
 	module.exports = RobustTimers;
 }
