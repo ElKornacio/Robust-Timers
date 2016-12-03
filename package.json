@@ -1,6 +1,6 @@
 {
   "name": "robust-timers",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Powerful yet simple timers engine with ability to save and restore timers states.",
   "main": "index.js",
   "scripts": {
