@@ -1,6 +1,7 @@
-let chai = require('chai');
-let expect = chai.expect;
-let RobustTimers = require('./index');
+"use strict";
+
+const expect = require('chai').expect;
+const RobustTimers = require('./../index');
 
 expect(RobustTimers).to.be.a('function');
 

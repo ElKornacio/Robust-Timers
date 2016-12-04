@@ -4,19 +4,20 @@
   "description": "Powerful yet simple timers engine with ability to save and restore timers states.",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha"
+    "test": "mocha tests/** --harmony_default_parameters"
   },
   "keywords": [
     "timers"
   ],
   "author": "Danila Simonov <ek@ek-mail.ru>",
   "license": "ISC",
-  "dependencies": {
-    "chai": "^3.5.0",
-    "mocha": "^3.2.0"
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "3.5.0",
+    "mocha": "3.2.0"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ElKornacio/Robust-Timers.git"
+    "url": "https://github.com/ElKornacio/Robust-Timers.git"
   }
 }

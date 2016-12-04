@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * RobustTimers plugin to save and restore timers states using native mysql module.
  *

@@ -1,9 +1,11 @@
+"use strict";
+
 /**
  * @author Danila Simonov <ek@ek-mail.ru>
  */
 
 /**
- * 
+ *
  * Simple class used for multiple purposes regarding to timers.
  * Except obvious functions like registering, unregistering timers,
  * you can easily save and restore timers states, register "once" timers,
@@ -55,7 +57,7 @@ class RobustTimers {
 	 */
 	__doInNextTick(func) {
 		if (
-			(typeof process !== 'undefined') && 
+			(typeof process !== 'undefined') &&
 			(typeof process.nextTick == 'function')
 			) {
 			process.nextTick(func);
@@ -106,7 +108,7 @@ class RobustTimers {
 	 * At the any time you can save all state, restart application, restore state, and everything will be as it was
 	 * before restart, and intervals will be corrected by restart time cost (just because we are saving timestamps).
 	 *
-	 * It provides it's own callback to a timer's handler, and in this callback it decides what to do next - 
+	 * It provides it's own callback to a timer's handler, and in this callback it decides what to do next -
 	 * if it is "once"-timer - it just self-unregistering after execution, if it's usual interval-based timer -
 	 * it reruns itself in the next event-loop tick (to avoid recusive problems) and everything starts again.
 	 *
@@ -333,7 +335,7 @@ class RobustTimers {
 		}
 		let promise = this.__onRestoreHandler(this);
 		if (!(promise instanceof Promise)) {
-			throw new Error('Restore handler should always return promise.')	
+			throw new Error('Restore handler should always return promise.')
 		}
 		return promise.then(() => {
 			return this;
@@ -358,7 +360,7 @@ class RobustTimers {
 		}
 		let promise = this.__onSaveHandler(this);
 		if (!(promise instanceof Promise)) {
-			throw new Error('Save handler should always return promise.')	
+			throw new Error('Save handler should always return promise.')
 		}
 		return promise.then(() => {
 			return this;
