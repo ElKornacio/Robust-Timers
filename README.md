@@ -8,6 +8,43 @@
 $ npm install robust-timers
 ```
 
+## Example
+
+Simple example of usage in pair with mysql native driver.
+
+```js
+let RobustTimers = require('./index');
+let mysql = require('mysql');
+
+app.timers = new RobustTimers();
+
+app.timers.register({
+    name: 'mail checker',
+    interval: 15 * 60 * 1000,
+    handler: _ => new Promise((resole, reject) => {
+        app.gmail.preloadAllMails()
+            .then(app.gmail.loadNewMails)
+            .then(app.gmail.loadAttachments)
+            .then(resolve)
+            .catch(reject);
+    })
+});
+
+let conn = mysql.createConnection({
+    host     : 'localhost',
+    user     : 'root',
+    password : 'root',
+    database : 'tempTest'
+});
+
+conn.connect();
+
+let dataSource = RobustTimers.DataSource.NativeMySQL(conn);
+app.timers.assignDataSource(dataSource);
+
+app.timers.restore().then(_ => r.start());
+```
+
 ## RobustTimers
 Simple class used for multiple purposes regarding to timers.
 Except obvious functions like registering, unregistering timers,
