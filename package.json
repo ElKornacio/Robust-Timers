@@ -4,7 +4,7 @@
   "description": "Powerful yet simple timers engine with ability to save and restore timers states.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests/** --harmony_default_parameters"
+    "test": "mocha tests/**"
   },
   "keywords": [
     "timers"
