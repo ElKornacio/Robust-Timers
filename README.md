@@ -1,5 +1,7 @@
 <a name="RobustTimers"></a>
 
+[![Build Status](https://travis-ci.org/ElKornacio/Robust-Timers.svg?branch=master)](https://travis-ci.org/ElKornacio/Robust-Timers)
+
 [Documentation: https://elkornacio.github.io/Robust-Timers/](https://elkornacio.github.io/Robust-Timers/)
 
 ## Installation
